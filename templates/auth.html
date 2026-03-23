@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'login' %}Log In{% else %}Sign Up{% endif %} - CareConnect{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;">
+  <div class="card" style="width:100%;max-width:440px;padding:40px;">
+    <div class="text-center mb-3">
+      <a href="{{ url_for('home') }}" class="logo" style="font-size:1.6rem;">Care<span>Connect</span></a>
+      {% if mode == 'login' %}
+        <h2 style="margin-top:16px;font-weight:700;">Welcome back</h2>
+        <p class="text-muted" style="font-size:0.9rem;">Sign in to your account</p>
+      {% else %}
+        <h2 style="margin-top:16px;font-weight:700;">Create your account</h2>
+        <p class="text-muted" style="font-size:0.9rem;">Sign up to find trusted caregivers</p>
+      {% endif %}
+    </div>
+
+    <form method="POST">
+      {% if mode == 'register' %}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="full_name" required>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="phone">
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required minlength="6">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px;height:46px;">
+        {% if mode == 'login' %}Log In{% else %}Create Account{% endif %}
+      </button>
+    </form>
+
+    <p class="text-center text-muted mt-3" style="font-size:0.9rem;">
+      {% if mode == 'login' %}
+        Don't have an account? <a href="{{ url_for('register') }}" style="font-weight:600;">Sign up</a>
+      {% else %}
+        Already have an account? <a href="{{ url_for('login') }}" style="font-weight:600;">Log in</a>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}CareConnect - Find Trusted Caregivers in Hyderabad{% endblock %}
+
+{% block content %}
+<section style="position:relative;padding:80px 0 100px;overflow:hidden;background:linear-gradient(135deg,#f0faf8 0%,#faf8f5 50%,#fef3eb 100%);">
+  <div class="container text-center" style="position:relative;z-index:1;">
+    <span class="badge badge-primary mb-2" style="font-size:0.85rem;padding:8px 20px;">Hyderabad's #1 Caregiver Platform</span>
+    <h1 style="font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:800;line-height:1.15;margin:24px 0;">
+      Find the perfect care for<br>your <span style="background:linear-gradient(90deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">loved ones</span>
+    </h1>
+    <p style="font-size:1.15rem;color:var(--muted);max-width:600px;margin:0 auto 32px;">
+      Connect with verified, experienced caregivers in Hyderabad. Whether you need infant care, a live-in nanny, or occasional babysitting, we've got you covered.
+    </p>
+    <a href="{{ url_for('browse') }}" class="btn btn-primary btn-lg">Find a Caregiver</a>
+  </div>
+</section>
+
+<section style="padding:48px 0;">
+  <div class="container" style="max-width:900px;">
+    <div style="position:relative;border-radius:24px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.12);">
+      <img src="{{ url_for('static', filename='images/childcare-hero.jpg') }}" alt="Happy child playing with colorful toys"
+           style="width:100%;height:380px;object-fit:cover;display:block;">
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.45),transparent);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:32px;">
+        <p style="color:white;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.3);">
+          Every child deserves joyful, nurturing care
+        </p>
+        <p style="color:rgba(255,255,255,0.8);font-size:0.9rem;margin-top:4px;">Trusted caregivers across Hyderabad</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:64px 0;background:white;">
+  <div class="container">
+    <div class="text-center mb-3">
+      <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;">Why choose CareConnect?</h2>
+      <p class="text-muted mt-1" style="max-width:550px;margin-left:auto;margin-right:auto;">
+        We prioritize safety, reliability, and finding the perfect match for your family's unique needs.
+      </p>
+    </div>
+    <div class="grid-3 mt-4">
+      <div class="card" style="padding:32px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(42,157,143,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;">&#128737;</div>
+        <h3 style="font-weight:700;margin-bottom:8px;">Verified Profiles</h3>
+        <p class="text-muted" style="font-size:0.9rem;">Every caregiver passes through our verification process ensuring peace of mind for your family.</p>
+      </div>
+      <div class="card" style="padding:32px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(231,111,81,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;">&#10084;</div>
+        <h3 style="font-weight:700;margin-bottom:8px;">Perfect Matches</h3>
+        <p class="text-muted" style="font-size:0.9rem;">Filter by language, location, age group, and experience to find exactly who you need.</p>
+      </div>
+      <div class="card" style="padding:32px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(42,157,143,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;">&#9202;</div>
+        <h3 style="font-weight:700;margin-bottom:8px;">Flexible Scheduling</h3>
+        <p class="text-muted" style="font-size:0.9rem;">From full-time nannies to occasional babysitters, find care that fits your schedule.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:60px 0;background:rgba(42,157,143,0.04);">
+  <div class="container text-center">
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:16px;">Ready to find peace of mind?</h2>
+    <p class="text-muted mb-3" style="font-size:1.1rem;">Join families in Hyderabad who trust CareConnect.</p>
+    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Create a Free Account</a>
+  </div>
+</section>
+{% endblock %}

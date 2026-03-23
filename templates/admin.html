@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - CareConnect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:40px 20px;">
+  <h1 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:24px;">Admin Dashboard</h1>
+
+  <div class="grid-4 mb-3">
+    <div class="card stat-card">
+      <div class="stat-icon" style="background:#dbeafe;color:#1d4ed8;">&#128101;</div>
+      <div><div class="stat-value">{{ stats.total_users }}</div><div class="stat-label">Total Users</div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon" style="background:rgba(42,157,143,0.1);color:var(--primary);">&#9989;</div>
+      <div><div class="stat-value">{{ stats.approved }}</div><div class="stat-label">Approved Caregivers</div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon" style="background:#fef3c7;color:#92400e;">&#9888;</div>
+      <div><div class="stat-value">{{ stats.pending }}</div><div class="stat-label">Pending Approval</div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon" style="background:rgba(231,111,81,0.1);color:var(--accent);">&#128172;</div>
+      <div><div class="stat-value">{{ stats.total_requests }}</div><div class="stat-label">Total Requests</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <a href="#approvals" class="tab active" onclick="showTab('approvals',this)">Caregiver Approvals{% if pending_cgs %} ({{ pending_cgs|length }}){% endif %}</a>
+    <a href="#requests" class="tab" onclick="showTab('requests',this)">Contact Requests</a>
+    <a href="#add" class="tab" onclick="showTab('add',this)">Add Caregiver</a>
+  </div>
+
+  <div id="tab-approvals">
+    <div class="card">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);" class="flex-between">
+        <h2 style="font-weight:700;">Pending Caregiver Approvals</h2>
+        <span class="badge badge-pending">{{ pending_cgs|length }} Pending</span>
+      </div>
+      {% if not pending_cgs %}
+        <div class="text-center" style="padding:48px 20px;"><p class="text-muted">No pending approvals at this time.</p></div>
+      {% else %}
+        {% for cg in pending_cgs %}
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="flex:1;">
+              <h3 style="font-weight:700;">{{ cg.user.full_name }}</h3>
+              <p class="text-muted" style="font-size:0.85rem;">{{ cg.user.email }}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                <span class="badge badge-primary">{{ cg.experience_years }} yrs exp</span>
+                <span class="badge badge-primary">{{ cg.location }}</span>
+              </div>
+              <p style="font-size:0.9rem;margin-top:8px;color:var(--muted);">{{ cg.bio[:120] }}{% if cg.bio|length > 120 %}...{% endif %}</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <form method="POST" action="{{ url_for('admin_caregiver_action', cid=cg.id, action='reject') }}">
+                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_caregiver_action', cid=cg.id, action='approve') }}">
+                <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="tab-requests" style="display:none;">
+    <div class="card">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);" class="flex-between">
+        <h2 style="font-weight:700;">All Contact Requests</h2>
+        <span class="badge badge-primary">{{ all_requests|length }} Total</span>
+      </div>
+      {% if not all_requests %}
+        <div class="text-center" style="padding:48px 20px;"><p class="text-muted">No contact requests yet.</p></div>
+      {% else %}
+        {% for req in all_requests %}
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <strong>{{ req.parent.full_name }}</strong>
+                <span class="text-muted">&rarr;</span>
+                <strong style="color:var(--primary);">{{ req.caregiver.user.full_name }}</strong>
+              </div>
+              {% if req.phone %}
+                <p style="font-size:0.85rem;color:var(--muted);">&#128222; <a href="tel:{{ req.phone }}">{{ req.phone }}</a></p>
+              {% endif %}
+              <p style="font-size:0.9rem;color:var(--muted);margin-top:4px;">{{ req.message }}</p>
+              <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                <span class="badge badge-{{ req.status }}">{{ req.status.title() }}</span>
+                <span class="text-muted" style="font-size:0.8rem;">{{ req.created_at.strftime('%d %b %Y') }}</span>
+              </div>
+            </div>
+            {% if req.status == 'pending' %}
+              <div style="display:flex;gap:8px;">
+                <form method="POST" action="{{ url_for('admin_request_action', rid=req.id, action='rejected') }}">
+                  <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin_request_action', rid=req.id, action='accepted') }}">
+                  <button type="submit" class="btn btn-primary btn-sm">Accept</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="tab-add" style="display:none;">
+    <div class="card" style="padding:32px;">
+      <h2 style="font-weight:700;margin-bottom:8px;">Add New Caregiver</h2>
+      <p class="text-muted mb-3" style="font-size:0.9rem;">Create a caregiver account. They will be auto-approved and visible to parents immediately.</p>
+
+      <form method="POST" action="{{ url_for('admin_add_caregiver') }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label>Full Name *</label><input type="text" name="full_name" required></div>
+          <div class="form-group"><label>Email *</label><input type="email" name="email" required></div>
+          <div class="form-group"><label>Phone</label><input type="text" name="phone"></div>
+          <div class="form-group"><label>Password *</label><input type="password" name="password" required minlength="6"></div>
+        </div>
+
+        <div class="form-group"><label>Bio *</label><textarea name="bio" required placeholder="Brief description..."></textarea></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="form-group"><label>Experience (years) *</label><input type="number" name="experience_years" min="0" required></div>
+          <div class="form-group"><label>Hourly Rate (INR)</label><input type="number" name="hourly_rate" min="0"></div>
+          <div class="form-group">
+            <label>Availability *</label>
+            <select name="availability" required>
+              <option value="full_time">Full Time</option>
+              <option value="part_time">Part Time</option>
+              <option value="live_in">Live In</option>
+              <option value="occasional">Occasional</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label>Languages * <small>(comma separated)</small></label><input type="text" name="languages" required placeholder="Telugu, Hindi, English"></div>
+          <div class="form-group"><label>Age Groups * <small>(comma separated)</small></label><input type="text" name="age_groups" required placeholder="Infant, Toddler, School Age"></div>
+          <div class="form-group"><label>Location *</label><input type="text" name="location" required value="Hyderabad"></div>
+          <div class="form-group"><label>Skills <small>(comma separated)</small></label><input type="text" name="skills" placeholder="First Aid, Cooking"></div>
+        </div>
+
+        <div class="form-group"><label>Contact Phone (admin-only)</label><input type="text" name="contact_phone" placeholder="Private phone number"></div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;height:46px;margin-top:8px;">Create Caregiver</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('[id^="tab-"]').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).style.display = 'block';
+  el.classList.add('active');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Browse Caregivers - CareConnect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:40px 20px;">
+  <h1 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:24px;">Browse Caregivers</h1>
+
+  <div class="card" style="padding:20px;margin-bottom:32px;">
+    <form method="GET" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <div class="form-group" style="flex:1;min-width:150px;margin:0;">
+        <label>Location</label>
+        <input type="text" name="location" value="{{ filters.location }}" placeholder="e.g. Banjara Hills">
+      </div>
+      <div class="form-group" style="flex:1;min-width:150px;margin:0;">
+        <label>Language</label>
+        <input type="text" name="language" value="{{ filters.language }}" placeholder="e.g. Telugu">
+      </div>
+      <div class="form-group" style="flex:1;min-width:150px;margin:0;">
+        <label>Age Group</label>
+        <select name="age_group">
+          <option value="">All</option>
+          {% for ag in ["Infant", "Toddler", "School Age", "Teenager"] %}
+            <option value="{{ ag }}" {{ "selected" if filters.age_group == ag }}>{{ ag }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" style="flex:1;min-width:150px;margin:0;">
+        <label>Availability</label>
+        <select name="availability">
+          <option value="">All</option>
+          {% for k, v in [("full_time","Full Time"),("part_time","Part Time"),("live_in","Live In"),("occasional","Occasional")] %}
+            <option value="{{ k }}" {{ "selected" if filters.availability == k }}>{{ v }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="height:42px;">Search</button>
+    </form>
+  </div>
+
+  {% if not caregivers %}
+    <div class="card text-center" style="padding:60px 20px;">
+      <p class="text-muted" style="font-size:1.1rem;">No caregivers found matching your criteria.</p>
+    </div>
+  {% else %}
+    <div class="grid-2">
+      {% for cg in caregivers %}
+        <a href="{{ url_for('caregiver_detail', cid=cg.id) }}" style="text-decoration:none;color:inherit;">
+          <div class="card" style="padding:24px;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+              <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;font-weight:700;">
+                {{ cg.user.full_name[0] }}
+              </div>
+              <div>
+                <h3 style="font-weight:700;font-size:1.1rem;">{{ cg.user.full_name }}</h3>
+                <p class="text-muted" style="font-size:0.85rem;">{{ cg.location }}</p>
+              </div>
+            </div>
+            <p style="font-size:0.9rem;color:var(--muted);margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ cg.bio }}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span class="badge badge-primary">{{ cg.experience_years }} yrs exp</span>
+              <span class="badge badge-primary">{{ cg.availability.replace('_', ' ').title() }}</span>
+              {% for lang in cg.languages[:2] %}
+                <span class="badge" style="background:#f3f4f6;color:var(--text);">{{ lang }}</span>
+              {% endfor %}
+              {% if cg.hourly_rate %}
+                <span class="badge" style="background:#fef3c7;color:#92400e;">&#8377;{{ cg.hourly_rate|int }}/hr</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ cg.user.full_name }} - CareConnect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:40px 20px;max-width:800px;">
+  <a href="{{ url_for('browse') }}" style="font-size:0.9rem;color:var(--muted);display:inline-block;margin-bottom:20px;">&larr; Back to Browse</a>
+
+  <div class="card" style="padding:32px;">
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-size:1.8rem;font-weight:700;flex-shrink:0;">
+        {{ cg.user.full_name[0] }}
+      </div>
+      <div>
+        <h1 style="font-size:1.6rem;font-weight:700;">{{ cg.user.full_name }}</h1>
+        <p class="text-muted">{{ cg.location }}</p>
+      </div>
+      {% if cg.hourly_rate %}
+        <div style="margin-left:auto;text-align:right;">
+          <span style="font-size:1.5rem;font-weight:700;color:var(--primary);">&#8377;{{ cg.hourly_rate|int }}</span>
+          <span class="text-muted" style="font-size:0.85rem;">/hour</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+      <span class="badge badge-approved">{{ cg.experience_years }} years experience</span>
+      <span class="badge badge-primary">{{ cg.availability.replace('_', ' ').title() }}</span>
+      {% for lang in cg.languages %}
+        <span class="badge" style="background:#f3f4f6;color:var(--text);">{{ lang }}</span>
+      {% endfor %}
+    </div>
+
+    <h3 style="font-weight:700;margin-bottom:8px;">About</h3>
+    <p style="color:var(--muted);line-height:1.7;margin-bottom:24px;">{{ cg.bio }}</p>
+
+    {% if cg.age_groups %}
+      <h3 style="font-weight:700;margin-bottom:8px;">Age Groups</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;">
+        {% for ag in cg.age_groups %}
+          <span class="badge badge-primary">{{ ag }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if cg.skills %}
+      <h3 style="font-weight:700;margin-bottom:8px;">Skills</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;">
+        {% for s in cg.skills %}
+          <span class="badge" style="background:#ede9fe;color:#5b21b6;">{{ s }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if current_user and current_user.role == 'parent' %}
+    <div class="card mt-3" style="padding:32px;">
+      <h2 style="font-weight:700;margin-bottom:16px;">Send a Contact Request</h2>
+      <form method="POST" action="{{ url_for('send_contact', cid=cg.id) }}">
+        <div class="form-group">
+          <label>Your Phone Number</label>
+          <input type="text" name="phone" value="{{ current_user.phone }}" placeholder="Your phone number">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea name="message" required placeholder="Introduce yourself and describe what you're looking for..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+      </form>
+    </div>
+  {% elif not current_user %}
+    <div class="card mt-3 text-center" style="padding:32px;">
+      <p class="text-muted mb-2">Log in as a parent to send a contact request.</p>
+      <a href="{{ url_for('login') }}" class="btn btn-primary">Log In</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
